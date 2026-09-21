@@ -30,8 +30,22 @@ if response.get("access_token"):
     print("\nSUCCESS! Here's your access token:\n")
     print(token)
 
+    # Save access token
     with open("access_token.txt", "w") as f:
         f.write(token)
     print("\nSaved to access_token.txt")
+
+    # Save the FULL response (includes refresh_token for automation)
+    import json, time
+    with open("token_response.json", "w") as f:
+        json.dump({
+            "access_token": token,
+            "refresh_token": response.get("refresh_token"),
+            "expires_in": response.get("expires_in"),
+            "token_type": response.get("token_type"),
+            "created_at": int(time.time()),
+        }, f, indent=2)
+    print("Saved to token_response.json (refresh_token captured: "
+          f"{'YES' if response.get('refresh_token') else 'NO'})")
 else:
     print("\nError:", response)

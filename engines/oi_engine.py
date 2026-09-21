@@ -75,18 +75,29 @@ def analyse_oi(chain: List[dict], spot: float, top_n: int = 3) -> OIResult:
     range_low  = supports[0]["strike"]    if supports    else max_pain
     zone = f"{range_low} - {range_high}"
 
-    # ------------- Crowd trap -------------
-    top_ce = max(ce.items(), key=lambda x: x[1]) if ce else (None, 0)
-    top_pe = max(pe.items(), key=lambda x: x[1]) if pe else (None, 0)
+           # ------------- Crowd trap (top-2 walls per side) -------------
+    top_ce_strikes = sorted(ce.items(), key=lambda x: -x[1])[:2]
+    top_pe_strikes = sorted(pe.items(), key=lambda x: -x[1])[:2]
+
+    call_wall = top_ce_strikes[0] if top_ce_strikes else (None, 0)
+    put_wall  = top_pe_strikes[0] if top_pe_strikes else (None, 0)
+
     crowd = {
-        "highest_call_oi_strike": int(top_ce[0]) if top_ce[0] else None,
-        "highest_call_oi_value":  int(top_ce[1]),
-        "highest_put_oi_strike":  int(top_pe[0]) if top_pe[0] else None,
-        "highest_put_oi_value":   int(top_pe[1]),
+        "highest_call_oi_strike": int(call_wall[0]) if call_wall[0] else None,
+        "highest_call_oi_value":  int(call_wall[1]),
+        "highest_put_oi_strike":  int(put_wall[0]) if put_wall[0] else None,
+        "highest_put_oi_value":   int(put_wall[1]),
+        "top_call_walls": [
+            {"strike": int(k), "oi": int(v)} for k, v in top_ce_strikes
+        ],
+        "top_put_walls": [
+            {"strike": int(k), "oi": int(v)} for k, v in top_pe_strikes
+        ],
         "advice": (
-            f"Avoid buying CALLs at {top_ce[0]} and PUTs at {top_pe[0]} "
-            "- that's where the crowd is trapped."
-        ) if top_ce[0] and top_pe[0] else "n/a",
+            f"Major CALL wall at {call_wall[0]} ({call_wall[1]:,} OI). "
+            f"Major PUT wall at {put_wall[0]} ({put_wall[1]:,} OI). "
+            "Market avoids paying the crowd at these strikes."
+        ) if call_wall[0] and put_wall[0] else "n/a",
     }
 
     return OIResult(

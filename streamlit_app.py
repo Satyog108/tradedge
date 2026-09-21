@@ -188,8 +188,18 @@ with colR:
     for s in e1.supports:
         st.write(f"- `{s['strike']}` - OI {s['oi']:,}")
 
+# Crowd trap: show top-2 walls per side
 st.warning(e1.crowd_trap_warning["advice"])
 
+colWC, colWP = st.columns(2)
+with colWC:
+    st.caption("Top CALL walls (avoid buying CALLs here)")
+    for w in e1.crowd_trap_warning.get("top_call_walls", []):
+        st.write(f"- `{w['strike']}` - OI {w['oi']:,}")
+with colWP:
+    st.caption("Top PUT walls (avoid buying PUTs here)")
+    for w in e1.crowd_trap_warning.get("top_put_walls", []):
+        st.write(f"- `{w['strike']}` - OI {w['oi']:,}")
 # ---------------- Engine 2 ----------------
 st.subheader("Engine 2 - Premium Bias (ATM vs ITM)")
 if e2["bias"] == "BEARISH":

@@ -13,3 +13,6 @@ writer_errors.log
 
 # Backups
 backup_*/
+
+token_response.json
+refresh_token.py
