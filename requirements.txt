@@ -1,0 +1,6 @@
+streamlit
+supabase
+fyers-apiv3
+pandas
+numpy
+python-dotenv

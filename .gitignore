@@ -1,0 +1,15 @@
+# Environment & secrets
+.env
+access_token.txt
+.streamlit/secrets.toml
+.streamlit/secrets.toml.bak
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.log
+writer_errors.log
+
+# Backups
+backup_*/
